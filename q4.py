@@ -6,7 +6,7 @@ import struct
 class SolutionServer(server.EvadeAntivirusServer):
 
     def get_payload(self, pid):
-        raise NotImplementedError()
+        return 'sudo ./q4.template'
 
     def print_handler(self, payload, product):
         print(product)

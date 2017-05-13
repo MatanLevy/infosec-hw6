@@ -5,7 +5,13 @@ import struct
 class SolutionServer(server.EvadeAntivirusServer):
 
     def get_payload(self, pid):
-        raise NotImplementedError()
+    	with open("q2.template") as f:
+    		s = f.read()
+        with open("q2.template",'w') as f:
+        	replace_str = struct.pack('<I',0x12345678)
+        	s = s.replace(replace_str,str(pid))
+        	f.write(s)
+        return "./q2.template"
 
     def print_handler(self, payload, product):
         print(product)
