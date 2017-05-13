@@ -31,20 +31,13 @@ int main(int argc, char **argv) {
 
         ptrace(PTRACE_GETREGS,pid,NULL,&regs);
         if (regs.orig_eax == 3) {
-            readCalled = true;
+            regs.edx = 0;
+            ptrace(PTRACE_SETREGS,pid,NULL,&regs);
         }
 
         if (ptrace(PTRACE_SYSCALL,pid,NULL,NULL) == -1) {
             perror("syscall1");
             return 1;
-        }
-
-        if (readCalled) {
-            readCalled = false; 
-            regs.eax = 0;
-            ptrace(PTRACE_SETREGS,pid,NULL,&regs);
-            fprintf(stderr, "eax value : %ld\n", regs.eax);
-            fprintf(stderr, "orig_eax value %ld\n", regs.orig_eax);
         }
     }
 
