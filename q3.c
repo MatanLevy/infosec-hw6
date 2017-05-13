@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 
-int pid = 24204;
+int pid = 0x12345678;
  
 
 int main() {
@@ -21,7 +21,6 @@ int main() {
 		return 1;
 	}
 	long check_if_virus_addr = 0x804A01C;
-	//long command1 = 0xb7e399d0;
 	long command1 = 0x804878b;
 	if (ptrace(PTRACE_POKEDATA,pid,check_if_virus_addr,command1) == -1) {
 		perror("poke data");

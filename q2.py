@@ -5,13 +5,9 @@ import struct
 class SolutionServer(server.EvadeAntivirusServer):
 
     def get_payload(self, pid):
-    	with open("q2.template") as f:
-    		s = f.read()
-        with open("q2.template",'w') as f:
-        	replace_str = struct.pack('<I',0x12345678)
-        	s = s.replace(replace_str,str(pid))
-        	f.write(s)
-        return "./q2.template"
+        with open("q2.template", mode='rb') as file: # b is important -> binary
+            f = file.read()
+        return f.replace (struct.pack('<I',0x12345678), struct.pack('<I',pid))
 
     def print_handler(self, payload, product):
         print(product)

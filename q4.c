@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <sys/user.h>
 #include <stdbool.h>
-int pid = 24760;
+int pid = 0x12345678;
 
 
 int main(int argc, char **argv) {
@@ -25,19 +25,26 @@ int main(int argc, char **argv) {
         return 1;
     }
     int status;
-    struct user_regs_struct regs;
     bool readCalled = false;
     while (waitpid(pid,&status,0) && ! WIFEXITED(status)) {
+        struct user_regs_struct regs;
+
         ptrace(PTRACE_GETREGS,pid,NULL,&regs);
         if (regs.orig_eax == 3) {
             readCalled = true;
         }
-        ptrace(PTRACE_SYSCALL,pid,NULL,NULL);
+
+        if (ptrace(PTRACE_SYSCALL,pid,NULL,NULL) == -1) {
+            perror("syscall1");
+            return 1;
+        }
+
         if (readCalled) {
-            readCalled = false;
-            fprintf(stderr, "system call %ld from pid %d\n", regs.orig_eax, pid);
-            regs.orig_eax = 0;
+            readCalled = false; 
+            regs.eax = 0;
             ptrace(PTRACE_SETREGS,pid,NULL,&regs);
+            fprintf(stderr, "eax value : %ld\n", regs.eax);
+            fprintf(stderr, "orig_eax value %ld\n", regs.orig_eax);
         }
     }
 
